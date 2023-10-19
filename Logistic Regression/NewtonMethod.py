@@ -4,11 +4,10 @@ import math
 epsilon = 1e-7
 
 def sigmoid(x):
-    x = float(x)
-    if -x > np.log(np.finfo(type(x)).max): # check for overflow
-        return 0.0
-    else:
-        return 1 / (1 + np.exp(-x))
+    # if -x > np.log(np.finfo(type(x)).max): # check for overflow
+    #     return 0.0
+    # else:
+    return 1 / (1 + np.exp(-x))
 
     #return .5 * (1 + np.tanh(.5 * x)) # handling larger inputs
 
@@ -17,7 +16,12 @@ def cross_entropy(Y, predictions):
 
 def logistic_newtons_method_numpy(X, y, num_iters=10):
 
-    m, n = X.shape
+    X = np.array(X).reshape(-1,1)
+
+    X = np.hstack((np.ones_like(X), X)) # bias term
+
+    m, n = X.shape # returns a tuple of sizes of its dimensions
+
     theta = np.zeros(n) # array of n zeroes
 
     for _ in range(num_iters):
@@ -47,73 +51,80 @@ def logistic_newtons_method_numpy(X, y, num_iters=10):
         D is a diagonal matrix where the diagonal elements are given by hθ(X)(1−hθ(X)).
 
         """
+        hessian += np.eye(hessian.shape[0]) * 1e-5 
+        # In this code, np.eye(hessian.shape[0])  creates an identity matrix with the same size as the Hessian, and * 1e-5 scales it by a small constant. 
+        # When this ridge is added to the Hessian, it becomes invertible even if it was originally singular
+        # shape[0], returns the size of the first dimension of the array
 
         theta = theta - np.linalg.inv(hessian) @ gradient
 
     return theta
 
 
-def logistic_newtons_method(theta0, theta1, features , target_values , i):
-    m = len(target_values)  # number of training examples
+# def logistic_newtons_method(theta0, theta1, features , target_values , i):
+#     m = len(target_values)  # number of training examples
 
-    logistic_features = [sigmoid(theta0 + theta1*features[i]) for i in range(m)]
+#     logistic_features = [sigmoid(theta0 + theta1*features[i]) for i in range(m)]
 
-    gradient_theta0 = sum((target_values[i] - logistic_features[i]) for i in range(m))
-    gradient_theta1 = sum((target_values[i] - logistic_features[i]) * features[i] for i in range(m))
+#     gradient_theta0 = sum((target_values[i] - logistic_features[i]) for i in range(m))
+#     gradient_theta1 = sum((target_values[i] - logistic_features[i]) * features[i] for i in range(m))
 
-    hessian_theta0 = sum((logistic_features[i] * (1 - logistic_features[i])) for i in range(m))
-    hessian_theta1 = sum((logistic_features[i] * (1 - logistic_features[i])) * (features[i]**2) for i in range(m))
+#     hessian_theta0 = sum((logistic_features[i] * (1 - logistic_features[i])) for i in range(m))
+#     hessian_theta1 = sum((logistic_features[i] * (1 - logistic_features[i])) * (features[i]**2) for i in range(m))
 
-    theta0 = theta0 - gradient_theta0 / (hessian_theta0 + epsilon)
-    theta1 = theta1 - gradient_theta1 / (hessian_theta1 + epsilon)
+#     theta0 = theta0 - gradient_theta0 / (hessian_theta0 + epsilon)
+#     theta1 = theta1 - gradient_theta1 / (hessian_theta1 + epsilon)
 
-    return theta0,theta1
+#     return theta0,theta1
 
 # Sample data (input features and corresponding target values)
-x = list(range(1,20)) # Input features ; x[0] = 1 (dummy)
+x = list(range(2,20)) # Input features ; x[0] = 1 (dummy)
 y = [1 if i>5 else 0 for i in x ]
 
 print("Features:",x)
 
 print("Target values:",y)
 
-
-# Initial parameters
-theta0_log = 0.5
-theta1_log = 0.5
-
-# Learning rate
+# # Initial parameters
+# theta0_log = 0.5
+# theta1_log = 0.5
 
 # Number of iterations
-num_iterations = 10000000
+num_iterations = 10000
 
 # error tolerance 
-tolerance = 1e-2
+# tolerance = 1e-2
+
+theta_log = logistic_newtons_method_numpy(x, y, num_iterations)
+
+query_point = 1
+
+print(f"Prediction for {query_point}:", sigmoid(theta_log[0] + theta_log[1]*query_point))
 
 
-prev_cost = float('inf')
+# prev_cost = float('inf')
 
-for i in range(num_iterations):
-    theta0_log, theta1_log = logistic_newtons_method(theta0_log, theta1_log, x, y, i)
+# for i in range(num_iterations):
+#     theta0_log, theta1_log = logistic_newtons_method(theta0_log, theta1_log, x, y, i)
 
-    predictions = [sigmoid(theta0_log + theta1_log*i)for i in x]
+#     predictions = [sigmoid(theta0_log + theta1_log*i)for i in x]
 
-    cost = cross_entropy(y,predictions)
+#     cost = cross_entropy(y,predictions)
 
-    if abs(cost - prev_cost) < tolerance:
-        print(f"Converged at {i} (for Logistic Regression)")
-        break 
-    prev_cost = cost
+#     if abs(cost - prev_cost) < tolerance:
+#         print(f"Converged at {i} (for Logistic Regression)")
+#         break 
+#     prev_cost = cost
 
-print(f"Optimized Theta0 for Logistic Regression (Newton's Method):", theta0_log)
-print(f"Optimized Theta1 for Logistic Regression (Newton's Method):", theta1_log)
+print(f"Optimized Theta0 for Logistic Regression (Newton's Method):", theta_log[0])
+print(f"Optimized Theta1 for Logistic Regression (Newton's Method):", theta_log[1])
 
-input_data = list(range(1,20,3))
+input_data = list(range(1,30))
+input_data.extend([1,2,3,4,5])
 correct_output = [1 if i>5 else 0 for i in input_data ]
-# correct_output = [1 if i%2==0 else 0 for i in input_data]
 
 
-predictions = [sigmoid(theta0_log + theta1_log*i) for i in input_data]
+predictions = [sigmoid(theta_log[0] + theta_log[1]*i) for i in input_data]
 
 print("Input:", input_data)
 print("Correct output:" , correct_output)
