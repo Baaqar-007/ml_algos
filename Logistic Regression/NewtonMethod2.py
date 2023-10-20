@@ -14,7 +14,7 @@ def sigmoid(x):
         return 1 / (1 + np.exp(-x))
 
 def cross_entropy(Y, predictions):
-    return -sum((Y[i]*math.log(predictions[i] + epsilon ) + (1-Y[i])*math.log(1-predictions[i] + epsilon )) for i in range(len(Y)))
+    return sum((Y[i]*math.log(predictions[i] + epsilon ) + (1-Y[i])*math.log(1-predictions[i] + epsilon )) for i in range(len(Y)))
 
 def logistic_newtons_method(theta0, theta1, features , target_values , num_iterations=10000, tolerance=1e-7):
     m = len(target_values)  # number of training examples
@@ -45,11 +45,11 @@ def logistic_newtons_method(theta0, theta1, features , target_values , num_itera
     return theta0,theta1
 
 # Sample data (input features and corresponding target values)
-x = list(range(2,20)) # Input features ; x[0] = 1 (dummy)
+x = list(range(1,20)) # Input features ; x[0] = 1 (dummy)
 y = [1 if i>15 else 0 for i in x ]
 
 # Scale features
-x_scaled = [(i-np.mean(x))/np.std(x) for i in x]
+x_scaled = [(i-np.mean(x))//np.std(x) for i in x]
 
 print("Features:",x_scaled)
 print("Target values:",y)
@@ -63,7 +63,7 @@ theta0_log, theta1_log = logistic_newtons_method(theta0_log, theta1_log, x_scale
 
 query_point = 8
 
-print(f"Prediction for {query_point}:", sigmoid(theta0_log + theta1_log*(query_point-np.mean(x))/np.std(x)))
+print(f"Prediction for {query_point}:", sigmoid(theta0_log + theta1_log*(query_point-np.mean(x))//np.std(x)))
 
 print(f"Optimized Theta0 for Logistic Regression (Newton's Method):", theta0_log)
 print(f"Optimized Theta1 for Logistic Regression (Newton's Method):", theta1_log)
