@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+
+>>>>>>> e7b934eb4323188060ad8e5766f793453f8f4c68
 import numpy as np
 import math 
 
