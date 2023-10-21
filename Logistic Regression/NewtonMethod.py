@@ -28,7 +28,7 @@ def logistic_newtons_method_numpy(X, y, num_iters=10):
 
         h = sigmoid(X @ theta) # calculates the predicted values X multiplied with theta; "@" stands for matrix multiplication
 
-        gradient = X.T @ (h - y) 
+        gradient = X.T @ (y - h) 
 
         """
         Gradient of the log-likelihood: The gradient of the log-likelihood with respect to the parameters theta is calculated using the formula:
@@ -56,26 +56,10 @@ def logistic_newtons_method_numpy(X, y, num_iters=10):
         # When this ridge is added to the Hessian, it becomes invertible even if it was originally singular
         # shape[0], returns the size of the first dimension of the array
 
-        theta = theta - np.linalg.inv(hessian) @ gradient
+        theta = theta + np.linalg.inv(hessian) @ gradient
 
     return theta
 
-
-# def logistic_newtons_method(theta0, theta1, features , target_values , i):
-#     m = len(target_values)  # number of training examples
-
-#     logistic_features = [sigmoid(theta0 + theta1*features[i]) for i in range(m)]
-
-#     gradient_theta0 = sum((target_values[i] - logistic_features[i]) for i in range(m))
-#     gradient_theta1 = sum((target_values[i] - logistic_features[i]) * features[i] for i in range(m))
-
-#     hessian_theta0 = sum((logistic_features[i] * (1 - logistic_features[i])) for i in range(m))
-#     hessian_theta1 = sum((logistic_features[i] * (1 - logistic_features[i])) * (features[i]**2) for i in range(m))
-
-#     theta0 = theta0 - gradient_theta0 / (hessian_theta0 + epsilon)
-#     theta1 = theta1 - gradient_theta1 / (hessian_theta1 + epsilon)
-
-#     return theta0,theta1
 
 # Sample data (input features and corresponding target values)
 x = list(range(2,20)) # Input features ; x[0] = 1 (dummy)

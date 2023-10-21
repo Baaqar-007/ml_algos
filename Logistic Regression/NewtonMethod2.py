@@ -1,7 +1,7 @@
-<<<<<<< HEAD
-=======
+# <<<<<<< HEAD
+# =======
 
->>>>>>> e7b934eb4323188060ad8e5766f793453f8f4c68
+# >>>>>>> e7b934eb4323188060ad8e5766f793453f8f4c68
 import numpy as np
 import math 
 
@@ -14,9 +14,9 @@ def sigmoid(x):
         return 1 / (1 + np.exp(-x))
 
 def cross_entropy(Y, predictions):
-    return -sum((Y[i]*math.log(predictions[i] + epsilon ) + (1-Y[i])*math.log(1-predictions[i] + epsilon )) for i in range(len(Y)))
+    return  sum((Y[i]*math.log(predictions[i] + epsilon ) + (1-Y[i])*math.log(1-predictions[i] + epsilon )) for i in range(len(Y)))
 
-def logistic_newtons_method(theta0, theta1, features , target_values , num_iterations=10000, tolerance=1e-7):
+def logistic_newtons_method(theta0, theta1, features , target_values , num_iterations=10000, tolerance=1e-8):
     m = len(target_values)  # number of training examples
 
     prev_cost = float('inf')
@@ -30,8 +30,8 @@ def logistic_newtons_method(theta0, theta1, features , target_values , num_itera
         hessian_theta0 = sum((logistic_features[i] * (1 - logistic_features[i])) for i in range(m))
         hessian_theta1 = sum((logistic_features[i] * (1 - logistic_features[i])) * (features[i]**2) for i in range(m))
 
-        theta0 = theta0 -  gradient_theta0 / (hessian_theta0 + epsilon)
-        theta1 = theta1 -  gradient_theta1 / (hessian_theta1 + epsilon)
+        theta0 = theta0 +  gradient_theta0 / (hessian_theta0 + epsilon)
+        theta1 = theta1 +  gradient_theta1 / (hessian_theta1 + epsilon)
 
         predictions = [sigmoid(theta0 + theta1*i)for i in features]
 
@@ -45,36 +45,38 @@ def logistic_newtons_method(theta0, theta1, features , target_values , num_itera
     return theta0,theta1
 
 # Sample data (input features and corresponding target values)
-x = list(range(2,20)) # Input features ; x[0] = 1 (dummy)
+x = list(range(1,20)) # Input features ; x[0] = 1 (dummy)
+
 y = [1 if i>15 else 0 for i in x ]
 
 # Scale features
-x_scaled = [(i-np.mean(x))/np.std(x) for i in x]
+x_scaled = [(i-np.mean(x))//np.std(x) for i in x] # scaling the features increased the accuracy by 5%
 
-print("Features:",x_scaled)
+print("Features:",x)
+print("Scaled Features:",x_scaled)
 print("Target values:",y)
 
 # Initial parameters
-theta0_log = 0
-theta1_log = 0
+theta0_log = 0.1
+theta1_log = 0.1
 
 
 theta0_log, theta1_log = logistic_newtons_method(theta0_log, theta1_log, x_scaled, y)
 
-query_point = 8
+query_point = 12
 
-print(f"Prediction for {query_point}:", sigmoid(theta0_log + theta1_log*(query_point-np.mean(x))/np.std(x)))
+print(f"Prediction for {query_point}:", sigmoid(theta0_log + theta1_log*(query_point-np.mean(x))//np.std(x)))
 
 print(f"Optimized Theta0 for Logistic Regression (Newton's Method):", theta0_log)
 print(f"Optimized Theta1 for Logistic Regression (Newton's Method):", theta1_log)
 
-input_data = list(range(1,20))
-# input_data.extend([1,2,3,4,5])
-# input_data.extend([112,334,56])
-# input_data.extend([11,12,14])
+input_data = list(range(10,20))
+input_data.extend([1,2,3,4,5])
+input_data.extend([112,334,56])
+input_data.extend([11,12,14])
 correct_output = [1 if i>15 else 0 for i in input_data ]
 
-input_data_scaled = [(i-np.mean(x))/np.std(x) for i in input_data]
+input_data_scaled = [(i-np.mean(x))//np.std(x) for i in input_data]
 
 predictions = [sigmoid(theta0_log + theta1_log*i) for i in input_data_scaled]
 
@@ -92,6 +94,6 @@ print("Prediction Labels:", predicted_labels)
 correct_predictions = [1 if predicted_labels[i] == correct_output[i] else 0 for i in range(len(correct_output))]
 
 # Calculate accuracy
-accuracy = sum(correct_predictions) / len(correct_predictions) *100
+accuracy = sum(correct_predictions) / len(correct_predictions) * 100
 
 print("Accuracy for Logistic Regression:",accuracy,"%")
