@@ -33,7 +33,7 @@ def logistic_gradient_ascent(theta0, theta1, features , target_values , learning
 
 
 # Sample data (input features and corresponding target values)
-x = list(range(12,100,2)) # Input features ; x[0] = 1 (dummy)
+x = list(range(12,50,2)) # Input features ; x[0] = 1 (dummy)
 y = [1 if i>30 else 0 for i in x ]
 # y = [1 if i%2==0 else 0 for i in x]
 
