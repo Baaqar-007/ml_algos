@@ -88,6 +88,7 @@ nvb.fit(x_scaled,np.array(y))
 
 input_data = list(range(1,100,2))
 input_data.extend([1,2,3,14,7,8,16,32,112])
+# input_data = random.sample(range(1, 50), 49)
 correct_output = [0 if i<12 else 1 if i<30 else 2 for i in input_data]
 input_data_scaled = [(i-np.mean(x))/np.std(x) for i in input_data]
 
