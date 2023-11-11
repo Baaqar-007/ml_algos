@@ -116,4 +116,12 @@ print("Predictions:",predictions)
 # Calculate accuracy
 correct_predictions = [1 if predictions[i] == y_test_true[i] else 0 for i in range(len(y_test_true))]
 accuracy = sum(correct_predictions) / len(correct_predictions) * 100
-print("Accuracy:", accuracy, "%")
+print("Accuracy for Naive Bayes:", accuracy, "%")
+
+"""
+Sure, let's try to visualize these concepts:
+
+1. **Multinomial Naive Bayes**: Imagine you're in a fruit market with different types of fruits like apples, oranges, and bananas. Each fruit type can be thought of as a class. Now, you're given a basket of fruits but you don't know which fruit type is more common in the basket. You start picking fruits one by one and keep a count of each type. After going through all the fruits in the basket, you realize that apples are the most common. This is similar to how Multinomial Naive Bayes works. It counts the occurrence of features (fruits in this case) and based on that, it predicts the class (most common fruit type).
+
+2. **Multivariate Naive Bayes**: Now, imagine you're in a garden with different types of flowers. Each flower has features like petal length, petal width, etc. Each type of flower (like setosa, versicolor, virginica) forms a different class. You're given a flower and you need to determine its type. You measure the features (like petal length and width) and see where these measurements fall in the distribution of measurements for each flower type, which you assume to be a Gaussian (bell curve) distribution. The flower is then classified based on where its features are most likely to fall. This is similar to how Multivariate Naive Bayes works. It assumes the features are drawn from a Gaussian distribution and based on that, it predicts the class.
+"""
