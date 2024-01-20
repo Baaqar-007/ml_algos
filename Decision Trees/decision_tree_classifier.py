@@ -4,6 +4,11 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import pair_confusion_matrix
 import seaborn as sns
 import numpy as np
+import sys
+sys.path.insert(0, 'C:\\Users\\baaqa\\OneDrive\\Documents\\Machine Learning\\Decision Trees\\Ensemble Methods')
+from Random_Forest import RandomForest 
+from AdaBoost import AdaBoost
+
 
 class Node:
     def __init__(self, predicted_class):
@@ -96,16 +101,77 @@ n_classes = len(set(y))
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Initialize and fit the model
-model = DecisionTreeClassifier()
-model.fit(X_train, y_train, n_classes)
+n_trees = 100 
+n_learners = 100
+# Initialize and fit the models
+model_dt = DecisionTreeClassifier()
+model_rf = RandomForest(n_trees=n_trees)  
+model_ab = AdaBoost(n_learners=n_learners)  
+
+model_dt.fit(X_train, y_train, n_classes)
+model_rf.fit(X_train, y_train)  
+model_ab.fit(X_train, y_train)  
 
 # Predict the test data
-y_pred = model.predict(X_test)
+y_pred_dt = model_dt.predict(X_test)
+y_pred_rf = model_rf.predict(X_test)  
+y_pred_ab = model_ab.predict(X_test)  
 
-cm = pair_confusion_matrix(y_test, y_pred)
-plt.figure(figsize=(10,7))
-sns.heatmap(cm, annot=True)
-plt.xlabel('Predicted')
-plt.ylabel('Truth')
+# Compute the confusion matrices
+cm_dt = pair_confusion_matrix(y_test, y_pred_dt)
+cm_rf = pair_confusion_matrix(y_test, y_pred_rf)
+cm_ab = pair_confusion_matrix(y_test, y_pred_ab)
+
+# Create a figure with 3 subplots
+fig, axs = plt.subplots(ncols=3, figsize=(30,10))
+
+# Plot the confusion matrices
+sns.heatmap(cm_dt, annot=True, ax=axs[0])
+sns.heatmap(cm_rf, annot=True, ax=axs[1])
+sns.heatmap(cm_ab, annot=True, ax=axs[2])
+
+# Set titles
+axs[0].set_title('Decision Tree')
+axs[1].set_title('Random Forest')
+axs[2].set_title('AdaBoost')
+
+# Set labels
+for ax in axs:
+    ax.set_xlabel('Predicted')
+    ax.set_ylabel('Truth')
+
 plt.show()
+
+"""
+
+S.NO        Bagging                                                                                            Boosting
+
+1. The simplest way of combining predictions that belong to the same type.    A way of combining predictions that belong to the different types.
+
+2.  Aim to decrease variance, not bias.                                       Aim to decrease bias, not variance.
+
+3.  Each model receives equal weight.                                         Models are weighted according to their performance.
+
+4.  Each model is built independently.                                        New models are influenced by the performance of previously built models.
+
+5.  Different training data subsets are selected using row sampling with      Every new subset contains the elements that were misclassified by previous models.
+ replacementand random sampling methods from the entire training dataset.    
+
+6.  Bagging tries to solve the over-fitting problem.                          Boosting tries to reduce bias.
+
+7.  If the classifier is unstable (high variance), then apply bagging.        If the classifier is stable and simple (high bias) the apply boosting.
+
+8.  In this base classifiers are trained parallelly.                          In this base classifiers are trained sequentially.
+
+9   Example: The Random forest model uses Bagging.                            Example: The AdaBoost uses Boosting techniques
+
+"""
+
+
+
+"""
+Bagging is like asking each friend to guess the fruit independently, and then we choose the fruit that most friends guessed. Each friend makes their best guess, and in the end, we trust the wisdom of the crowd.
+
+Boosting, on the other hand, is like asking our friends to guess one by one. The first friend makes a guess. Then the second friend tries to correct the mistakes of the first friend. The third friend tries to correct the mistakes of the first two friends, and so on. In the end, we combine all their guesses, giving more importance to the guesses of friends who corrected more mistakes.
+
+"""

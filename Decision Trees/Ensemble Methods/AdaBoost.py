@@ -5,7 +5,7 @@ class AdaBoost:
     def __init__(self, n_learners):
         self.n_learners = n_learners
         self.learners = []
-        self.alphas = []
+        self.alphas = [] # stores individual weights
 
     def fit(self, X, y):
         weights = np.full(len(X), 1 / len(X))
@@ -34,3 +34,16 @@ class AdaBoost:
 
         # Return the sign of the sum of predictions for each instance
         return np.sign(np.sum(predictions, axis=0))
+
+"""
+Algorithm:
+
+1) Initialise the dataset and assign equal weight to each of the data point.
+2) Provide this as input to the model and identify the wrongly classified data points.
+3) Increase the weight of the wrongly classified data points and decrease the weights of correctly classified data points. And then normalize the weights of all data points.
+4) if (got required results)
+  Goto step 5
+else
+  Goto step 2
+5) End
+"""
